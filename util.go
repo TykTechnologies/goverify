@@ -33,6 +33,12 @@ func parsePublicKey(pemBytes []byte) (Verifier, error) {
 
 	var rawkey interface{}
 	switch block.Type {
+	case "RSA PUBLIC KEY":
+		rsa, err := x509.ParsePKCS1PublicKey(block.Bytes)
+		if err != nil {
+			return nil, err
+		}
+		rawkey = rsa
 	case "PUBLIC KEY":
 		rsa, err := x509.ParsePKIXPublicKey(block.Bytes)
 		if err != nil {
@@ -61,7 +67,7 @@ func LoadPrivateKeyFromString(key string) (Signer, error) {
 	return parsePrivateKey([]byte(key))
 }
 
-// parsePublicKey parses a PEM encoded private key.
+// parsePrivateKey parses a PEM encoded private key.
 func parsePrivateKey(pemBytes []byte) (Signer, error) {
 	block, _ := pem.Decode(pemBytes)
 	if block == nil {
@@ -76,6 +82,12 @@ func parsePrivateKey(pemBytes []byte) (Signer, error) {
 			return nil, err
 		}
 		rawkey = rsa
+	case "PRIVATE KEY":
+		privkey, err := x509.ParsePKCS8PrivateKey(block.Bytes)
+		if err != nil {
+			return nil, err
+		}
+		rawkey = privkey
 	default:
 		return nil, fmt.Errorf("ssh: unsupported key type %q", block.Type)
 	}
