@@ -5,11 +5,13 @@ import (
 	"fmt"
 )
 
-// A Verifier is can validate signatures that verify against a public key.
+// A Verifier can validate signatures that verify against a public key.
 type Verifier interface {
-	// Sign returns raw signature for the given data. This method
+	// Verify returns raw signature for the given data. This method
 	// will apply the hash specified for the keytype to the data.
 	Verify(data []byte, sig []byte) error
+
+	VerifyHash(hash []byte, sig []byte) error
 }
 
 func newVerifierFromKey(k interface{}) (Verifier, error) {

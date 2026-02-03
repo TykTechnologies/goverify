@@ -1,6 +1,7 @@
 package goverify
 
 import (
+	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
 	"testing"
@@ -61,4 +62,32 @@ func TestSignAndVerify(t *testing.T) {
 		t.Error("Validation should have succeeded, got error: ", err)
 	}
 
+}
+
+func TestVerifyHash(t *testing.T) {
+	signer, err := LoadPrivateKeyFromString(testPrivateKey)
+	if err != nil {
+		t.Fatalf("failed to load private key: %v", err)
+	}
+
+	message := []byte("date: Thu, 05 Jan 2012 21:31:40 GMT")
+
+	sig, err := signer.Sign(message)
+	if err != nil {
+		t.Fatalf("failed to sign message: %v", err)
+	}
+
+	verifier, err := LoadPublicKeyFromString(testPublicKey)
+	if err != nil {
+		t.Fatalf("failed to load public key: %v", err)
+	}
+
+	h := sha256.New()
+	h.Write(message)
+	hash := h.Sum(nil)
+
+	err = verifier.VerifyHash(hash, sig)
+	if err != nil {
+		t.Errorf("VerifyHash should have succeeded, got error: %v", err)
+	}
 }
