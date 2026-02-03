@@ -17,3 +17,7 @@ func (r *RSAPublicKey) Verify(message []byte, sig []byte) error {
 	d := h.Sum(nil)
 	return rsa.VerifyPKCS1v15(r.PublicKey, crypto.SHA256, d, sig)
 }
+
+func (r *RSAPublicKey) VerifyHash(hash []byte, sig []byte) error {
+	return rsa.VerifyPKCS1v15(r.PublicKey, crypto.SHA256, hash, sig)
+}
