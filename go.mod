@@ -1,3 +1,3 @@
 module github.com/TykTechnologies/goverify
 
-go 1.25.5
+go 1.24.6
